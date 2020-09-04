@@ -69,7 +69,7 @@ class VAEXperiment(pl.LightningModule):
         test_label = test_label.to(self.curr_device)
         recons = self.model.generate(test_input, labels = test_label)
         vutils.save_image(recons.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"{self.logger.save_dir}/imgdir/"
                           f"recons_{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=12)
