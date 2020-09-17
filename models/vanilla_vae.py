@@ -11,15 +11,19 @@ class VanillaVAE(BaseVAE):
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
+                 img_size: int,
                  hidden_dims: List = None,
                  **kwargs) -> None:
         super(VanillaVAE, self).__init__()
 
         self.latent_dim = latent_dim
-
+        self.img_size =img_size
         modules = []
         if hidden_dims is None:
-            hidden_dims = [32, 64, 128, 256, 512]
+            if self.img_size==64:
+                hidden_dims = [32, 64, 128, 256, 512]
+            elif self.img_size==32:
+                hidden_dims = [32, 64, 128, 256]
 
         # Build Encoder
         for h_dim in hidden_dims:
@@ -99,7 +103,10 @@ class VanillaVAE(BaseVAE):
         :return: (Tensor) [B x C x H x W]
         """
         result = self.decoder_input(z)
-        result = result.view(-1, 512, 2, 2)
+        if self.img_size==64:
+            result = result.view(-1, 512, 2, 2)
+        elif self.img_size==32:
+            result = result.view(-1, 256, 2, 2)
         result = self.decoder(result)
         result = self.final_layer(result)
         return result

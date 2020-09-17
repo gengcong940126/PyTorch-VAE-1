@@ -2,6 +2,7 @@ import math
 import torch
 from torch import optim
 from models import BaseVAE
+import torchvision.datasets as dset
 from models.types_ import *
 from utils import data_loader
 import pytorch_lightning as pl
@@ -137,10 +138,16 @@ class VAEXperiment(pl.LightningModule):
         transform = self.data_transforms()
 
         if self.params['dataset'] == 'celeba':
-            dataset = CelebA(root = self.params['data_path'],
+            dataset = CelebA(root = 'datasets/',
                              split = "train",
                              transform=transform,
                              download=False)
+        elif self.params['dataset'] == 'cifar10':
+            dataset = dset.CIFAR10(root='datasets/raw/cifar10',
+                                   download=True,
+                                   train=True,
+                                   transform=transform
+                                   )
         else:
             raise ValueError('Undefined dataset type')
 
@@ -179,6 +186,11 @@ class VAEXperiment(pl.LightningModule):
                                             transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
                                             SetRange])
+        elif self.params['dataset'] == 'cifar10':
+            transform = transforms.Compose([transforms.CenterCrop(self.params['img_size']),
+                                            transforms.Resize(self.params['img_size']),
+                                            transforms.ToTensor(),
+                                             SetRange])
         else:
             raise ValueError('Undefined dataset type')
         return transform
