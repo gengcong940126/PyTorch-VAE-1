@@ -86,7 +86,8 @@ class VAEXperiment(pl.LightningModule):
                                         self.curr_device,
                                         labels = test_label)
             vutils.save_image(samples.cpu().data,
-                              f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                              f"{self.logger.save_dir}/"
+            f"{self.logger.name}/version_{self.logger.version}/"
                               f"{self.logger.name}_{self.current_epoch}.png",
                               normalize=True,
                               nrow=12)
@@ -94,7 +95,7 @@ class VAEXperiment(pl.LightningModule):
             pass
 
 
-        del test_input, recons #, samples
+        del test_input, recons , samples
 
 
     def configure_optimizers(self):
@@ -164,6 +165,15 @@ class VAEXperiment(pl.LightningModule):
         if self.params['dataset'] == 'celeba':
             self.sample_dataloader =  DataLoader(CelebA(root = self.params['data_path'],
                                                         split = "test",
+                                                        transform=transform,
+                                                        download=False),
+                                                 batch_size= 144,
+                                                 shuffle = True,
+                                                 drop_last=True)
+            self.num_val_imgs = len(self.sample_dataloader)
+        elif self.params['dataset'] == 'cifar10':
+            self.sample_dataloader =  DataLoader(dset.CIFAR10(root ='datasets/raw/cifar10',
+                                                        train=True,
                                                         transform=transform,
                                                         download=False),
                                                  batch_size= 144,
