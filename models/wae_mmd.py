@@ -10,6 +10,7 @@ class WAE_MMD(BaseVAE):
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
+                 img_size: int,
                  hidden_dims: List = None,
                  reg_weight: int = 100,
                  kernel_type: str = 'imq',
@@ -21,7 +22,7 @@ class WAE_MMD(BaseVAE):
         self.reg_weight = reg_weight
         self.kernel_type = kernel_type
         self.z_var = latent_var
-
+        self.img_size=img_size
         modules = []
         if hidden_dims is None:
             if self.img_size == 64:
